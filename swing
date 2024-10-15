@@ -1,0 +1,91 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.text.DecimalFormat;
+
+public class OperacionesMatematicas extends JFrame {
+    private JTextField n1;
+    private JTextField n2;
+    private JComboBox comboOperaciones;
+    private JButton operarButton;
+    private JTextField result;
+    private JPanel PanelPrincipal;
+    private JRadioButton RadioOp1;
+    private JRadioButton RadioOp2;
+    private JCheckBox CheckRedondear;
+
+
+    public OperacionesMatematicas() {
+        setContentPane(PanelPrincipal);
+        setTitle("Operaciones Matematicas");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(500, 250);
+        setLocationRelativeTo(null);
+        setVisible(true);
+
+        comboOperaciones.addItem("sumar");
+        comboOperaciones.addItem("restar");
+        comboOperaciones.addItem("multiplicar");
+        comboOperaciones.addItem("dividir");
+
+        operarButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Double x,y,resultado;
+                String operacion;
+
+
+                resultado=0.0;
+
+                x = Double.parseDouble(n1.getText());
+                y = Double.parseDouble(n2.getText());
+                operacion = comboOperaciones.getSelectedItem().toString();
+                //JOptionPane.showMessageDialog(null, "" + operacion);
+                if(operacion.equals("sumar")){
+                    resultado = x+y;
+                }
+                if(operacion.equals("restar")) {
+                    if (RadioOp1.isSelected()) {
+                        resultado = x - y;
+                    } else {
+                        resultado = y - x;
+                    }
+                }
+                if(operacion.equals("multiplicar")){
+                    resultado = x*y;
+                }
+                if(operacion.equals("dividir")){
+                    if(RadioOp1.isSelected()) {
+                        resultado = x / y;
+                    }else {
+                        resultado = y / x;
+                    }
+                    if (CheckRedondear.isSelected()) {
+                        DecimalFormat df = new DecimalFormat("0.00");
+
+                        result.setText(df.format(resultado));
+                    } else {
+                        result.setText(resultado.toString());
+                    }
+                    JOptionPane.showMessageDialog(null, "El resultado es: " + result.getText());
+
+                }
+
+                result.setText(resultado.toString());
+
+
+            }
+        });
+        ButtonGroup group = new ButtonGroup();
+        group.add(RadioOp1);
+
+        group.add(RadioOp2);
+
+
+
+    }
+    public static void main(String[] args) {
+        new OperacionesMatematicas();
+    }
+}
