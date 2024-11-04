@@ -1,0 +1,31 @@
+/*esta sentencia SQL selecciona todos los registros de la tabla "productos" */
+SELECT * FROM productos;
+
+/*filtros : */
+/* selecciona los registros  que cumplen  la condicion de la cantidad */
+SELECT * FROM productos WHERE cantidad>=10;
+
+/*filtros : */
+/* selecciona los registros  que cumplen  la condicion de la cantidad */
+SELECT * FROM productos WHERE proveedor="tottus";
+
+/*ordenamos por cantidad  en forma  ASCEBDENTE */
+SELECT * FROM `productos`ORDER BY cantidad;
+
+/*ordenamos por cantidad  en forma  DESCENDENTE */
+SELECT * FROM `productos`ORDER BY cantidad DESC;
+
+/*en la siguiente sentencia ordenamos por precio del prodcuto*/
+SELECT * FROM `productos`ORDER BY precio;
+
+/*la siguiente sentencia ordena por descripción y es en orden alfabetico*/
+SELECT * FROM `productos`ORDER BY descricion;
+
+/*la siguiente sentencia busca productos  en cuya descripción se encuentra la silaba "co"*/
+SELECT * FROM `productos`
+WHERE descricion LIKE '%CO%';
+
+/* busquedas*/
+SELECT * FROM productos 
+WHERE descricion like 'f%';
+
