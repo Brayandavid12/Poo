@@ -29,3 +29,7 @@ WHERE descricion LIKE '%CO%';
 SELECT * FROM productos 
 WHERE descricion like 'f%';
 
+/*la siguiente sentencia modifica  el registro cuyo id es 1*/
+UPDATE productos SET descricion="azucar blanca x 50k",
+cantidad=100, proveedor="pomalca - lima" WHERE id=1;
+
