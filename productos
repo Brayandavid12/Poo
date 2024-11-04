@@ -1,0 +1,56 @@
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.*;
+
+public class FormularioProductos extends JFrame {
+    private JButton LISTARButton;
+    private JTable table1;
+    private JPanel panelproductos;
+
+
+    String host = "jdbc:mysql://localhost:3306/tiendabd";
+    String usuario = "root";
+    String password = "";
+
+    public Connection conectar_BD() {
+        Connection conexion = null;
+        try {
+            conexion = DriverManager.getConnection(host, usuario, password);
+
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Error al conectar con la base de datos");
+        }
+        return conexion;
+    }
+
+    public FormularioProductos() {
+        setContentPane(panelproductos);
+        setTitle("Formulario De Números Romanos");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(300, 300);
+        setLocationRelativeTo(null);
+        setVisible(true);
+
+        LISTARButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Connection conexion = null;
+                conexion = conectar_BD();
+
+                if(conexion!=null){
+                 JOptionPane.showMessageDialog(null,"Exelente, la base de datos ha respondido");
+
+                }else{
+                 JOptionPane.showMessageDialog(null,"Error al conectar con la base de datos");
+                }
+            }
+        });
+    }
+
+    public static void main(String[] args) {
+        new FormularioProductos();
+    }
+}
+
