@@ -33,3 +33,6 @@ WHERE descricion like 'f%';
 UPDATE productos SET descricion="azucar blanca x 50k",
 cantidad=100, proveedor="pomalca - lima" WHERE id=1;
 
+/* esta instancia elimina el producto con id 4*/
+DELETE FROM productos id =4;
+
