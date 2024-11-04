@@ -1,0 +1,238 @@
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.*;
+
+
+public class LIBROS extends JFrame{
+    private JTable tablalibros;
+    private JButton boton_eliminar;
+    private JButton boton_modificar;
+    private JButton boton_listar;
+    private JPanel panelLibros;
+    private JButton boton_nuevo;
+
+    String hastbd="jdbc:mysql://localhost:3306/bd_biblioteca";
+    String usuariobd="root";
+    String passwordbd="";
+    private JButton nuevoButton;
+    private JButton eliminarButton;
+    private JButton modificarButton;
+
+    public Connection conectarbd(){
+        Connection conex=null;
+        try{
+            conex= DriverManager.getConnection(hastbd,usuariobd,passwordbd);
+
+        }catch (SQLException e){
+            JOptionPane.showMessageDialog(null,"no hemos podido conectarmos asu base de datos " );
+            System.out.println("Error no se puede acessar a la base de datos ");
+        }
+        return conex;
+    }
+
+    public LIBROS() {//inicio del constructor
+        setContentPane(panelLibros);//agregamos el panel principal
+        setTitle("formulario de libros ");//titulo de formulario
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//accion para cerrar la ventana
+        setLocationRelativeTo(null);//centrado del formularioen pantalla
+        setResizable(false);//para que el usuario no pueda modificar el tamaño del formulario
+        setVisible(true);//para visulaizar la pantalla
+        setSize(500, 400);// tamaño del formulario
+
+
+        boton_listar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Connection conex ;
+                conex = conectarbd();
+                if (conex != null) {
+                    System.out.println("exelente , la BD ha respondidio.");
+                    JOptionPane.showMessageDialog(null, "exelente , la BD ha respondidio.");
+
+                    Statement statement = null;//sirve para intrucciones SQL
+                    ResultSet resultset = null;//ES para el conjunto de registros
+
+                    String SQL = "select * from libros";//selecciona todos los registros de de la tabla de libros
+                    try {
+
+                        statement = conex.createStatement();
+                        resultset = statement.executeQuery(SQL);
+
+                        //creamos un modelo para mostrar los registros en el JTABLE
+
+                        DefaultTableModel modelo = new DefaultTableModel();
+                        modelo.setColumnIdentifiers(new Object[]{"titulo", "autor", "n_paginas"});
+                        modelo.setRowCount(0);
+
+                        while (resultset.next()) {
+                            Object[] fila = new Object[4];
+                            fila[0] = resultset.getString("titulo");
+                            fila[1] = resultset.getString("autor");
+                            fila[2] = resultset.getInt("n_paginas");
+                            modelo.addRow(fila);
+
+
+                        }
+                        tablalibros.setModel(modelo);
+
+                    } catch (SQLException ex) {
+                        System.out.println(ex.getMessage());
+                        System.out.println(" Error no se puede acessar a la base de datos ");
+                    }
+
+
+                } else {
+                    System.out.println("lo siento , la BD no ha respondido ");
+                }
+            }
+        });
+        boton_nuevo.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                String titulo = JOptionPane.showInputDialog("Ingrese el título del libro:");
+                String autor = JOptionPane.showInputDialog("Ingrese el autor del libro:");
+                String nPaginasStr = JOptionPane.showInputDialog("Ingrese el número de páginas del libro:");
+
+
+                if (titulo != null && autor != null && nPaginasStr != null) {
+                    try {
+                        int nPaginas = Integer.parseInt(nPaginasStr); // Convertir a entero
+
+
+                        Connection conex = conectarbd();
+                        if (conex != null) {
+                            String sql = "INSERT INTO libros (titulo, autor, n_paginas) VALUES (?, ?, ?)";
+                            PreparedStatement preparedStatement = conex.prepareStatement(sql);
+                            preparedStatement.setString(1, titulo);
+                            preparedStatement.setString(2, autor);
+                            preparedStatement.setInt(3, nPaginas);
+
+
+                            int filasAfectadas = preparedStatement.executeUpdate();
+                            if (filasAfectadas > 0) {
+                                JOptionPane.showMessageDialog(null, "Libro agregado exitosamente");
+                            } else {
+                                JOptionPane.showMessageDialog(null, "Error al agregar el libro");
+                            }
+
+                            preparedStatement.close();
+                            conex.close();
+                        } else {
+                            JOptionPane.showMessageDialog(null, "La conexión no ha respondido");
+                        }
+                    } catch (NumberFormatException ex) {
+                        JOptionPane.showMessageDialog(null, "El número de páginas debe ser un número entero.");
+                    } catch (SQLException ex) {
+                        JOptionPane.showMessageDialog(null, "Error al acceder a la base de datos: " + ex.getMessage());
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Todos los campos son obligatorios.");
+                }
+            }
+
+        });
+        boton_modificar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Solicitar el título del libro a modificar
+                String tituloAntiguo = JOptionPane.showInputDialog("Ingrese el título del libro que desea modificar:");
+
+                if (tituloAntiguo != null && !tituloAntiguo.trim().isEmpty()) {
+                    // Solicitar los nuevos datos del libro
+                    String nuevoTitulo = JOptionPane.showInputDialog("Ingrese el nuevo título del libro:");
+                    String nuevoAutor = JOptionPane.showInputDialog("Ingrese el nuevo autor del libro:");
+                    String nPaginasStr = JOptionPane.showInputDialog("Ingrese el nuevo número de páginas del libro:");
+
+                    if (nuevoTitulo != null && nuevoAutor != null && nPaginasStr != null) {
+                        try {
+                            int nPaginas = Integer.parseInt(nPaginasStr); // Convertir a entero
+
+                            Connection conex = conectarbd();
+                            if (conex != null) {
+                                // Preparar la consulta SQL para actualizar el libro
+                                String sql = "UPDATE libros SET titulo = ?, autor = ?, n_paginas = ? WHERE titulo = ?";
+                                PreparedStatement preparedStatement = conex.prepareStatement(sql);
+                                preparedStatement.setString(1, nuevoTitulo);
+                                preparedStatement.setString(2, nuevoAutor);
+                                preparedStatement.setInt(3, nPaginas);
+                                preparedStatement.setString(4, tituloAntiguo);
+
+                                int filasAfectadas = preparedStatement.executeUpdate();
+                                if (filasAfectadas > 0) {
+                                    JOptionPane.showMessageDialog(null, "Libro modificado exitosamente");
+                                } else {
+                                    JOptionPane.showMessageDialog(null, "No se encontró el libro con el título especificado o no se modificó nada.");
+                                }
+
+                                preparedStatement.close();
+                                conex.close();
+                            } else {
+                                JOptionPane.showMessageDialog(null, "La conexión no ha respondido");
+                            }
+                        } catch (NumberFormatException ex) {
+                            JOptionPane.showMessageDialog(null, "El número de páginas debe ser un número entero.");
+                        } catch (SQLException ex) {
+                            JOptionPane.showMessageDialog(null, "Error al acceder a la base de datos: " + ex.getMessage());
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Todos los campos son obligatorios.");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "El título del libro a modificar es obligatorio.");
+                }
+            }
+        });
+        boton_eliminar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                boton_eliminar.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        // Solicitar el título del libro a eliminar
+                        String tituloAEliminar = JOptionPane.showInputDialog("Ingrese el título del libro que desea eliminar:");
+
+                        if (tituloAEliminar != null && !tituloAEliminar.trim().isEmpty()) {
+                            Connection conex = conectarbd();
+                            if (conex != null) {
+                                try {
+                                    // Preparar la consulta SQL para eliminar el libro
+                                    String sql = "DELETE FROM libros WHERE titulo = ?";
+                                    PreparedStatement preparedStatement = conex.prepareStatement(sql);
+                                    preparedStatement.setString(1, tituloAEliminar);
+
+                                    int filasAfectadas = preparedStatement.executeUpdate();
+                                    if (filasAfectadas > 0) {
+                                        JOptionPane.showMessageDialog(null, "Libro eliminado exitosamente");
+                                    } else {
+                                        JOptionPane.showMessageDialog(null, "No se encontró el libro con el título especificado.");
+                                    }
+
+                                    preparedStatement.close();
+                                    conex.close();
+                                } catch (SQLException ex) {
+                                    JOptionPane.showMessageDialog(null, "Error al acceder a la base de datos: " + ex.getMessage());
+                                }
+                            } else {
+                                JOptionPane.showMessageDialog(null, "La conexión no ha respondido");
+                            }
+                        } else {
+                            JOptionPane.showMessageDialog(null, "El título del libro a eliminar es obligatorio.");
+                        }
+                    }
+                });
+
+            }
+
+        });
+    }
+        public static void main (String[]args){//inicio del main
+            new LIBROS();
+
+        }//fin fe main
+    }
+
+
+
