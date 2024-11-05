@@ -46,7 +46,7 @@ public class LIBROS extends JFrame{
         boton_listar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Connection conex ;
+                Connection conex;
                 conex = conectarbd();
                 if (conex != null) {
                     System.out.println("exelente , la BD ha respondidio.");
@@ -64,14 +64,15 @@ public class LIBROS extends JFrame{
                         //creamos un modelo para mostrar los registros en el JTABLE
 
                         DefaultTableModel modelo = new DefaultTableModel();
-                        modelo.setColumnIdentifiers(new Object[]{"titulo", "autor", "n_paginas"});
+                        modelo.setColumnIdentifiers(new Object[]{"id", "titulo", "autor", "n_paginas"});
                         modelo.setRowCount(0);
 
                         while (resultset.next()) {
-                            Object[] fila = new Object[4];
-                            fila[0] = resultset.getString("titulo");
-                            fila[1] = resultset.getString("autor");
-                            fila[2] = resultset.getInt("n_paginas");
+                            Object[] fila = new Object[5];
+                            fila[0] = resultset.getInt("id");
+                            fila[1] = resultset.getString("titulo");
+                            fila[2] = resultset.getString("autor");
+                            fila[3] = resultset.getInt("n_paginas");
                             modelo.addRow(fila);
 
 
@@ -138,54 +139,33 @@ public class LIBROS extends JFrame{
         boton_modificar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Solicitar el título del libro a modificar
-                String tituloAntiguo = JOptionPane.showInputDialog("Ingrese el título del libro que desea modificar:");
+                int filaselcionada=tablalibros.getSelectedRow();
+                System.out.println("Se ha seleccionado la fila "+filaselcionada);
 
-                if (tituloAntiguo != null && !tituloAntiguo.trim().isEmpty()) {
-                    // Solicitar los nuevos datos del libro
-                    String nuevoTitulo = JOptionPane.showInputDialog("Ingrese el nuevo título del libro:");
-                    String nuevoAutor = JOptionPane.showInputDialog("Ingrese el nuevo autor del libro:");
-                    String nPaginasStr = JOptionPane.showInputDialog("Ingrese el nuevo número de páginas del libro:");
 
-                    if (nuevoTitulo != null && nuevoAutor != null && nPaginasStr != null) {
-                        try {
-                            int nPaginas = Integer.parseInt(nPaginasStr); // Convertir a entero
+                if(filaselcionada==-1){
 
-                            Connection conex = conectarbd();
-                            if (conex != null) {
-                                // Preparar la consulta SQL para actualizar el libro
-                                String sql = "UPDATE libros SET titulo = ?, autor = ?, n_paginas = ? WHERE titulo = ?";
-                                PreparedStatement preparedStatement = conex.prepareStatement(sql);
-                                preparedStatement.setString(1, nuevoTitulo);
-                                preparedStatement.setString(2, nuevoAutor);
-                                preparedStatement.setInt(3, nPaginas);
-                                preparedStatement.setString(4, tituloAntiguo);
 
-                                int filasAfectadas = preparedStatement.executeUpdate();
-                                if (filasAfectadas > 0) {
-                                    JOptionPane.showMessageDialog(null, "Libro modificado exitosamente");
-                                } else {
-                                    JOptionPane.showMessageDialog(null, "No se encontró el libro con el título especificado o no se modificó nada.");
-                                }
 
-                                preparedStatement.close();
-                                conex.close();
-                            } else {
-                                JOptionPane.showMessageDialog(null, "La conexión no ha respondido");
-                            }
-                        } catch (NumberFormatException ex) {
-                            JOptionPane.showMessageDialog(null, "El número de páginas debe ser un número entero.");
-                        } catch (SQLException ex) {
-                            JOptionPane.showMessageDialog(null, "Error al acceder a la base de datos: " + ex.getMessage());
-                        }
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Todos los campos son obligatorios.");
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(null, "El título del libro a modificar es obligatorio.");
                 }
+                String id = tablalibros.getValueAt(filaselcionada, 0).toString();
+                String titulo=tablalibros.getValueAt(filaselcionada,1).toString();
+                String autor=tablalibros.getValueAt(filaselcionada,2).toString();
+                String n_paginas=tablalibros.getValueAt(filaselcionada,3).toString();
+
+                System.out.println(id + " " + titulo + " " + autor + " " + n_paginas);
+
+
+                //aqui debemos crear una nueva ventana en la que mostraresmo los datos del
+                //libro a modificar
+
+                DialogModificar vetanilla=new DialogModificar(id,titulo,autor,n_paginas);
+                vetanilla.setVisible(true);
+
+
             }
         });
+
         boton_eliminar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
