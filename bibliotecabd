@@ -12,13 +12,14 @@ public class LIBROS extends JFrame{
     private JButton boton_listar;
     private JPanel panelLibros;
     private JButton boton_nuevo;
+    private JButton GUARDARButton;
+    private JTextField textField1;
+    private JTextField textField2;
+    private JTextField textField3;
 
     String hastbd="jdbc:mysql://localhost:3306/bd_biblioteca";
     String usuariobd="root";
     String passwordbd="";
-    private JButton nuevoButton;
-    private JButton eliminarButton;
-    private JButton modificarButton;
 
     public Connection conectarbd(){
         Connection conex=null;
@@ -49,7 +50,7 @@ public class LIBROS extends JFrame{
                 conex = conectarbd();
                 if (conex != null) {
                     System.out.println("exelente , la BD ha respondidio.");
-                    JOptionPane.showMessageDialog(null, "exelente , la BD ha respondidio.");
+
 
                     Statement statement = null;//sirve para intrucciones SQL
                     ResultSet resultset = null;//ES para el conjunto de registros
@@ -227,11 +228,50 @@ public class LIBROS extends JFrame{
             }
 
         });
+        GUARDARButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                String Titulo = textField1.getText();
+                String Autor = textField2.getText();
+                String N_PaginasStr = textField3.getText();
+
+                try {
+                    int nPaginas = Integer.parseInt(N_PaginasStr);
+
+                    Connection conex = conectarbd();
+
+                    if (conex != null) {
+                        String sql = "INSERT INTO libros (titulo, autor, n_paginas) VALUES (?, ?, ?)";
+                        PreparedStatement preparedStatement = conex.prepareStatement(sql);
+                        preparedStatement.setString(1, Titulo);
+                        preparedStatement.setString(2, Autor);
+                        preparedStatement.setInt(3, nPaginas);
+
+                        int filasAfectadas = preparedStatement.executeUpdate();
+                        if (filasAfectadas > 0) {
+                            JOptionPane.showMessageDialog(null, "Libro guardado exitosamente");
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Error al guardar el libro");
+                        }
+
+                        preparedStatement.close();
+                        conex.close();
+                    } else {
+                        JOptionPane.showMessageDialog(null, "La conexión no ha respondido");
+                    }
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(null, "El número de páginas debe ser un número entero.");
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(null, "Error al acceder a la base de datos: " + ex.getMessage());
+                }
+            }
+        });
     }
-        public static void main (String[]args){//inicio del main
+        public static void main (String[]args){
             new LIBROS();
 
-        }//fin fe main
+        }
     }
 
 
