@@ -1,0 +1,71 @@
+import javax.swing.*;
+import java.awt.event.*;
+
+public class DialogModificar extends JDialog {
+    private JPanel contentPane;
+    private JButton buttonOK;
+    private JButton buttonCancel;
+    private JTextField text_1;
+    private JTextField text_2;
+    private JTextField text_3;
+    private JTextField text_0;
+
+    public DialogModificar(String id,String titulo, String autor,String n_paginas) {
+        setContentPane(contentPane);
+        setModal(true);
+        getRootPane().setDefaultButton(buttonOK);
+        setSize(300,200);
+        setLocationRelativeTo(null);
+        setTitle("formulario modificar");
+
+        // colocmos los parametros recibidos en los cuadros de texto
+
+        text_1.setText(autor);
+        text_2.setText(titulo);
+        text_3.setText(n_paginas);
+        text_0.setText(id);
+
+
+        buttonOK.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                onOK();
+
+
+
+
+            }
+        });
+
+        buttonCancel.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                onCancel();
+            }
+        });
+
+        // call onCancel() when cross is clicked
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                onCancel();
+            }
+        });
+
+        // call onCancel() on ESCAPE
+        contentPane.registerKeyboardAction(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                onCancel();
+            }
+        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+    }
+
+    private void onOK() {
+        // add your code here
+        dispose();
+    }
+
+    private void onCancel() {
+        // add your code here if necessary
+        dispose();
+    }
+
+}
