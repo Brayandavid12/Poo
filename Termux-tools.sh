@@ -26,7 +26,7 @@ echo -e "\e[34m   ██║   ██║   ██║██║   ██║██�
 echo -e "\e[34m   ██║   ╚██████╔╝╚██████╔╝███████╗███████║ "
 echo -e "\e[34m   ╚═╝    ╚═════╝  ╚═════╝ ╚══════╝╚══════╝"
 echo -e "\e[0;36m                         				  V3 STABLE"
-echo -e "\e[1;37m  GITHUB: https://github.com/Arturo254    "
+echo -e "\e[1;37m  GITHUB:  https://github.com/Brayandavid12/Poo.git   "
 echo "							   "
 
 
@@ -196,7 +196,7 @@ apt install cloudflared -y
 read -p "¿Desea clonar el repositorio 'https://github.com/Arturo254/Lolcat'? [Y/N]: " answer
 
 if [[ $answer == "Y" || $answer == "y" ]]; then
-  git clone https://github.com/Arturo254/Lolcat
+  git clone https://github.com/Brayandavid12/Poo.git
   cd Lolcat
   chmod 777 *
   bash lolcat.sh
