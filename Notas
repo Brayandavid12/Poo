@@ -36,3 +36,10 @@ cantidad=100, proveedor="pomalca - lima" WHERE id=1;
 /* esta instancia elimina el producto con id 4*/
 DELETE FROM productos id =4;
 
+
+C  INSERT 
+R  SELECT
+U  UPDATE
+D  DELETE
+
+
