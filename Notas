@@ -37,8 +37,8 @@ cantidad=100, proveedor="pomalca - lima" WHERE id=1;
 DELETE FROM productos id =4;
 
 
-C  INSERT 
-R  SELECT
+C  INSERT - CREATE (CREAR)
+R  SELECT - READ (LEER)
 U  UPDATE
 D  DELETE
 
